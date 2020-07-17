@@ -6,7 +6,7 @@
 *
 * This is my first Java App
 * that I decided to develop myself without copy pasting from any other projects.
-* Just using OCA, OCP and Head First books for java.
+* Just using OCA and Head First books for java.
 */
 
 /*
@@ -25,7 +25,10 @@
  *  limitations under the License.
  */
 
+import java.io.*;
 import java.util.*;
+import static java.lang.Integer.parseInt;
+
 
 /**
  * Quiz class
@@ -34,166 +37,276 @@ import java.util.*;
  */
 public class Quiz {
 
+    // path to a file where quiz questions are written as text
+    private static final String SOURCE_FILE = "C:\\Users\\Bagi\\IdeaProjects\\quiz\\src\\main\\resources\\questions.txt";
+
+    // path to the file where we get questions
+    private static File source = new File(SOURCE_FILE);
+
+    // string array for storing each string data from source file
+    private static List<String> data;
+
+    // List to store all Question object from file source data
+    private static List<Question> listQuestions = new ArrayList<>();
+
     // List to store all new gamers object to show scores anf names for statistic
-    public static List<Gamer> listGamers = new ArrayList<>();
+    private static List<Gamer> listGamers = new ArrayList<>();
 
-    public static void main(String[] args) {
+    // create new Gamer instance
+    private static Gamer gamer = new Gamer();
 
-        // boolean flag to stop first loop While if need to choose quit from the quiz game at all
-        boolean quit = true;
+    // boolean flag to stop first loop While if need to choose quit from the quiz game at all
+    private static boolean quit = true;
 
-        // boolean flag to stop second loop While if need to change gamer to new user
-        boolean changeGamer;
+    // interacting with gamers by console
+    public static Console console = System.console();
 
-        // First loop While to quit from the quiz game at all
-        while (quit) {
 
-            // create new Gamer instance
-            Gamer gamer = new Gamer();
+    public static void main(String[] args) throws IOException {
+
+        // TODO: method to save a list of gamers with score to a file
+        // TODO: method to get and show a list of gamers with score to a file
+
+        // return string array data using my readingFile() method
+        data = readFile(source);
+
+        // add Question objects to list using my addQuestionsToList() method from Quiz class
+        addQuestionsToList(data, listQuestions);
+
+
+
+        // check if console is available in user machine
+        if(console != null) {
+
+            // Welcome words for gamer
+            console.writer().println("****************************************************");
+            console.writer().println("Hello in Quiz App by '@BagiYa'");
+            console.writer().println("****************************************************");
+
+            console.writer().println("Your score at start: " + gamer.getScore());
+
+            // get user name from console and set it to gamer instance using my getSetGamerName() method from Quiz class
+            getSetGamerName(gamer);
+
+            // Say hello to gamer and start quiz game
+            console.writer().println("Glad to see you, " + gamer.getName() + "!");
+            console.writer().println("****************************************************");
+            console.writer().println("Now you need to answer quiz questions to get the highest score.");
+            console.writer().println("****************************************************");
+
+            // start Quiz game using my startQuiz() method from Quiz class
+            startQuiz(console);
+        }
+
+        else {
+            console.writer().println("****************************************************");
+            console.writer().println("Console is not available. Check if it is available on your machine...");
+        }
+
+        // show all questions for testing code using my method showQuestions() from Quiz class
+        //showQuestions(listQuestions);
+
+    }
+
+
+
+
+    /**
+     * Method to start Quiz game in console
+     *
+     * @param console
+     */
+    private static void startQuiz(Console console) {
+
+        // index to step next question in showQuestion() method in main while loop
+        int indexNextQuestion = 0;
+
+        // main while loop to start quiz game, show questions with scores until gamer answer to all, prefer to quit or change gamer
+        while (quit == true && indexNextQuestion < listQuestions.size()) {
+
+            // show question per one using my showQuestion() method from Quiz class
+            showQuestion(listQuestions, indexNextQuestion);
+
+            // printing instructions for gamer how to quit from game or change to new gamer
+            console.writer().println("****************************************************");
+            console.writer().println("If you wanna quit from the quiz game, just enter 'q' when answering!");
+            console.writer().println("If you wanna change to new gamer, just enter 'g' when answering!");
+            console.writer().println("****************************************************");
+
+            // console to ask gamer choose a number of answer for given question
+            String stringConsoleAnswer = console.readLine("Please, enter your answer: ");
+
+            // index number of entered answer, used to check matches between strings in answer and answers[answerInt-1]
+            int answerInt = -1;
+
+            // catching NumberFormatException when trying to convert gamer answer string from console to int number
+            try {
+
+                answerInt = parseInt(stringConsoleAnswer);
+                //console.writer().println("answerInt: " + answerInt);
+
+            } catch (NumberFormatException e) {
+                //e.printStackTrace();
+            }
+
+            // getting right answer and answer's varieties from Question instance fields 'answer' and 'answers' in list
+            String answer = listQuestions.get(indexNextQuestion).getAnswer();
+            String[] answers = listQuestions.get(indexNextQuestion).getAnswers();
+
+            // check gamer's answer string to process logic of next quiz steps
+            // "q" to quit
+            if(stringConsoleAnswer.matches("q")) {
+
+                console.writer().println("****************************************************");
+                console.writer().println("You chose to quit from Quiz game, thank you for trying!");
+
+                // save gamers score to list and show all gamers scores
+                saveGamerScore(listGamers, gamer);
+
+                // show list of gamer's score statistic info
+                showGamersScore(listGamers);
+
+                // boolean flag to quit from main while loop and stop the Quiz app in console
+                quit = false;
+            }
+
+            // "g" to change gamer
+            else if(stringConsoleAnswer.matches("g")) {
+
+                console.writer().println("****************************************************");
+                console.writer().println("You chose to change to new gamer, thank you for trying!");
+
+                // save gamers score to list and show all gamers scores
+                saveGamerScore(listGamers, gamer);
+
+                // show list of gamer's score statistic info
+                showGamersScore(listGamers);
+
+                // start the main() again with new gamer
+                String[] stringsVarargs = {"New gamer is launching..."};
+
+                // create new gamer for quiz game
+                gamer = new Gamer();
+
+                try {
+                    Quiz.main(stringsVarargs);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // right answer to congratulate, set and show gamer's score
+            else if (answerInt > 0 && answerInt <= answers.length && answer.matches(answers[answerInt-1])) {
+
+                // set gamer's score
+                gamer.setScore();
+
+                console.writer().println("****************************************************");
+
+                // show gamer's score
+                console.writer().println("Good job!!! Your score is: " + gamer.getScore());
+
+                // show explanation of answer
+                console.writer().println("Explanation: " + listQuestions.get(indexNextQuestion).getExplanation());
+
+                // increase index to step next question in showQuestion() method in main while loop
+                indexNextQuestion++;
+            }
+
+            // wrong answer to say try again
+            else {
+
+                console.writer().println("*** No answers is matched ***");
+                console.writer().println("Your answer is wrong.");
+                console.writer().println("Should be some from 1 to : " + listQuestions.get(indexNextQuestion).getAnswers().length);
+            }
+        }
+
+    }
+
+
+    /**
+     * Method to read data from source file and return it
+     *
+     * @param source
+     * @return
+     * @throws IOException
+     */
+    private static List<String> readFile(File source) throws IOException {
+
+        List<String> data = new ArrayList<>();
+
+        try(BufferedReader in = new BufferedReader(new FileReader(source))) {
+
+            String s;
+
+            while ((s = in.readLine()) != null) {
+                data.add(s);
+            }
+
+        }
+
+        return data;
+    }
+
+
+    /**
+     * Method to add Question objects to list
+     *
+     * @param dataFromReadFile
+     * @param listQuestions
+     */
+    private static void addQuestionsToList(List<String> dataFromReadFile, List<Question> listQuestions) {
+
+        for (String s : dataFromReadFile) {
 
             // create new Question instance
             Question question = new Question();
 
-            // change flag to true to start second loop While again with new gamer
-            changeGamer = true;
+            // split string with all question instance fields to string array by ':'
+            String[] questionArray = s.split(":");
 
-            System.out.println("**********************************");
-            System.out.println("* Hello in Quiz App by '@BagiYa' *");
-            System.out.println("**********************************");
-            System.out.println();
-            System.out.println();
+            // set all Question instance fields
+            if(questionArray.length == Question.COUNT_OF_FIELDS_IN_QUESTION_CLASS) {
 
-            // show list of gamer's names and scores
-            if(listGamers.size() != 0) {
+                int indexQuestionArray = questionArray.length - Question.COUNT_OF_FIELDS_IN_QUESTION_CLASS;
 
-                // method from Quiz class
-                showGamersScore(listGamers);
+                question.setQuestion(questionArray[indexQuestionArray]);
+                question.setAnswer(questionArray[indexQuestionArray+1]);
+                question.setExplanation(questionArray[indexQuestionArray+2]);
+
+                // to set answers field split string with all answers varieties to string array by '~'
+                String[] answerVarieties = questionArray[indexQuestionArray+3].split("~");
+
+                question.setAnswers(answerVarieties);
             }
 
-            // method for scanning user typing in console to get his name and set it to gamer instance
-            // this method from Quiz class
-            getSetGamerName(gamer);
+            // add each Question object to list
+            listQuestions.add(question);
+        }
 
-            System.out.println("******************************");
-            System.out.println("Glad to see you " + gamer.getName() + "!");
-            System.out.println();
-            System.out.println("Now you need to answer quiz questions to get the highest score.");
-            System.out.println("******************************");
-            System.out.println();
+        return;
+    }
 
-            // 2 loop to change to new gamer
-            while (changeGamer) {
 
-                /** Start - this code need to get question, right answer, explanation
-                and variants of answers from DataBase or DataFile to change questions after it is used **/
+    /**
+     * Method to show question and answer varieties from list of Question objects
+     *
+     * @param listQuestions
+     */
+    private static void showQuestion(List<Question> listQuestions, int indexNextQuestion) {
 
-                // save new question, answer and explanation to question object of Question class
-                question.setQuestion("What is the capital of Kazakhstan ?");
-                question.setAnswer("Nur-Sultan");
-                question.setExplanation("Nur-Sultan is the capital of Kazakhstan country. Before it was Astana!");
+        console.writer().println("****************************************************");
+        console.writer().println("Question: " + listQuestions.get(indexNextQuestion).getQuestion());
 
-                // create Collection to save answer variants for quiz question
-                ArrayList<String> answersVariants = new ArrayList<String>();
-                answersVariants.add(0, "Aktau");
-                answersVariants.add(1, "Nur-Sultan");
-                answersVariants.add(2, "Oral");
+        console.writer().println("Answers varieties: ");
 
-                // show question to gamer
-                System.out.println(question.getQuestion());
-                System.out.println("******************************");
-                System.out.println();
+        int indexVariety = 1;
 
-                // show all variant of answers to gamer
-                for (int i = 0; i < answersVariants.size(); i++) {
-                    System.out.println(i+1 + ") " + answersVariants.get(i));
-                }
-                System.out.println("******************************");
-                System.out.println();
+        for (String answerVariety : listQuestions.get(indexNextQuestion).getAnswers()) {
 
-                // check gamer answer from console typing while he type acceptable number for answer
-                int i = 0;
-                while (i < 1 || i > answersVariants.size()) {
-
-                    // scan char numbers from console typing to get gamer answer
-                    Scanner inAnswerNumber = new Scanner(System.in);
-                    System.out.print("Choose the right number of answer: ");
-
-                    // catch exceptions if typed letters or symbols instead of numbers
-                    try {
-                        i = inAnswerNumber.nextInt();
-                    } catch (InputMismatchException e) {
-                        e.fillInStackTrace();
-                    }
-                    System.out.println();
-                }
-
-                // save number of answer minus 1 for index position in answerVariants list
-                int answerNumber = --i;
-
-                // check for right answer to congratulate gamer and store score +1
-                if (answersVariants.get(answerNumber) == question.getAnswer()) {
-
-                    System.out.println("Congratulations!!! Good job :-)");
-                    System.out.println();
-
-                    // show explanation of the answer to gamer
-                    System.out.println(question.getExplanation());
-                    System.out.println();
-
-                    // store gamer's score (each answer = +1 score)
-                    gamer.setScore();
-
-                    // show gamer's scores
-                    System.out.println("Now your score: " + gamer.getScore());
-                    System.out.println("******************************");
-                    System.out.println();
-                }
-                /** End - this code need to get question, right answer, explanation
-                and variants of answers from DataBase or DataFile to change questions after it is used **/
-
-                else {
-                    // scan char letters from console typing to get gamer answer
-                    Scanner inQuitChangeNext = new Scanner(System.in);
-
-                    System.out.println("Wrong answer...");
-                    System.out.println("******************************");
-                    System.out.println("Type 'no' to quit from the quiz game;");
-                    System.out.println("Type 'new' to change to new gamer;");
-                    System.out.println("Type any keyboard key to try Next Question.");
-                    System.out.println("******************************");
-                    System.out.print("What do you choose: ");
-
-                    // save answer as variable string quitChangeNext
-                    String quitChangeNext = inQuitChangeNext.nextLine();
-
-                    // check quitChangeNext answer to choose either gamer wanna quit, change user or get next question
-                    // quit from game at all
-                    if (quitChangeNext.equals("no")) {
-
-                        // method to quit from quiz game at all
-                        // this method from Quiz class
-                        quitFromGame(listGamers, gamer);
-
-                        // boolean flags to out from first and second loops
-                        changeGamer = false;
-                        quit = false;
-                    }
-                    // change to new user (gamer)
-                    else if (quitChangeNext.equals("new")) {
-
-                        // add new gamer object to list from this gamer instance using Gamer class parameterised constructor
-                        listGamers.add(new Gamer(gamer));
-                        
-                        System.out.println("******************************");
-                        System.out.println("Waiting for next gamer......");
-                        System.out.println();
-
-                        // boolean flag to out from second loop (inner)
-                        changeGamer = false;
-                    }
-                    System.out.println();
-                }
-            }
+            console.writer().println(indexVariety + ") "+ answerVariety);
+            indexVariety++;
         }
     }
 
@@ -205,17 +318,15 @@ public class Quiz {
      */
     private static void getSetGamerName(Gamer newGamer) {
 
-        // scan user typing in console
-        Scanner inAnswerName = new Scanner(System.in);
-        System.out.println("Please, fill your name for score statistic and enjoy playing Quiz. ");
-        System.out.println("******************************");
-        System.out.print("Your name is: ");
-        String gamerName = inAnswerName.nextLine();
-        System.out.println();
+        String gamerName = console.readLine("Please, enter your name: ");
 
         // sets new gamer name in Gamer class instance
         newGamer.setName(gamerName);
+
     }
+
+
+    // TODO: add method to retrieve gamers from file and put them to list of gamers
 
     /**
      * Method to quit from quiz game at all
@@ -223,21 +334,18 @@ public class Quiz {
      * @param listOfGamers
      * @param gamer
      */
-    private static void quitFromGame(List<Gamer> listOfGamers, Gamer gamer) {
+    private static void saveGamerScore(List<Gamer> listOfGamers, Gamer gamer) {
 
-        System.out.println("******************************");
-        System.out.println("Your highest score: " + gamer.getScore());
-        System.out.println("Good luck, see you soon !!!");
-        System.out.println("******************************");
-        System.out.println();
+        console.writer().println("Your highest score: " + gamer.getScore());
+        console.writer().println("Good luck, see you next time !!!");
+        console.writer().println("******************************");
 
         // this code line where I use Gamer class parameterised constructor
         // to store all gamers objects to list for statistic info
         listOfGamers.add(new Gamer(gamer));
 
-        // show list of gamer's score statistic info
-        showGamersScore(listOfGamers);
     }
+
 
     /**
      * Method to show list of gamers by score
@@ -256,18 +364,18 @@ public class Quiz {
         // default array sorting and reverse to show winners by highest score
         Arrays.sort(o, Collections.reverseOrder());
 
-        System.out.println("______________________________");
-        System.out.println("List of the best Quiz gamers by Score");
-        System.out.println("______________________________");
+        console.writer().println("List of the best Quiz gamers by Score:");
+        console.writer().println("******************************");
 
         // show list of gamers by score
-        int i = 0;
+        int indexGamer = 0;
+
         for(Object objGamer : o) {
-            System.out.println(i+1 + ". " + objGamer.toString());
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            i++;
+
+            console.writer().println(indexGamer+1 + ") " + objGamer.toString());
+            console.writer().println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            indexGamer++;
         }
-        System.out.println();
 
         /*
         * 2 variant of sorting array by score by implementing Comparator interface in Gamer class
@@ -281,25 +389,57 @@ public class Quiz {
         // lambda statement to sort array by score
         //Arrays.sort(objectArray, (o1, o2) -> ((Gamer)o1).getScore() - ((Gamer)o2).getScore());
 
-        // another variant code instead of lambda statement to sort array by score
+        // another variant code instead of lambda statement to sort array by name
         Arrays.sort(objectArray, new Comparator<Object>(){
+
             @Override
             public int compare(Object o1, Object o2) {
                 //return ((Gamer)o1).getScore() - ((Gamer)o2).getScore();
                 return ((Gamer)o1).getName().compareTo(((Gamer)o2).getName());
             }
+
         });
 
+        console.writer().println("List of Quiz gamers by Name:");
+        console.writer().println("______________________________");
 
-        System.out.println("______________________________");
-        System.out.println("List of the gamers by Name");
-        System.out.println("______________________________");
         int k = 0;
+
         for(Object objGamer : objectArray) {
-            System.out.println(k+1 + ". " + objGamer.toString());
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+            console.writer().println(k+1 + ") " + objGamer.toString());
+            console.writer().println("******************************");
             k++;
         }
-        System.out.println();
+
+        console.writer().println("______________________________");
     }
+
+
+
+    /**
+     * Method to show all questions for testing code
+     *
+     * @param listQuestions
+     */
+    private static void showQuestions(List<Question> listQuestions) {
+
+        for (int i = 0; i < listQuestions.size(); i++) {
+
+            console.writer().println("****************************************************");
+            console.writer().println("Question: " + listQuestions.get(i).getQuestion());
+            console.writer().println("Answer: " + listQuestions.get(i).getAnswer());
+            console.writer().println("Explanation: " + listQuestions.get(i).getExplanation());
+
+            int indexVariety = 1;
+
+            for (String answerVariety : listQuestions.get(i).getAnswers()) {
+
+                console.writer().println(indexVariety + " variety: "+ answerVariety);
+                indexVariety++;
+            }
+        }
+    }
+
+
 }

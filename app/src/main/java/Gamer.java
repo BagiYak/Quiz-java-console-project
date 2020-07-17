@@ -6,7 +6,7 @@
  *
  * This is my first Java App
  * that I decided to develop myself without copy pasting from any other projects.
- * Just using OCA, OCP and Head First books for java.
+ * Just using OCA and Head First books for java.
  */
 
 /*
@@ -63,7 +63,7 @@ public class Gamer implements Comparable {
 
     @Override
     public String toString() {
-        return "Gamer: " + name + ", score: " + score;
+        return "Gamer: " + name + ", score=" + score;
     }
 
     @Override

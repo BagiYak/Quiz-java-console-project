@@ -6,7 +6,7 @@
  *
  * This is my first Java App
  * that I decided to develop myself without copy pasting from any other projects.
- * Just using OCA, OCP and Head First books for java.
+ * Just using OCA and Head First books for java.
  */
 
 /*
@@ -34,25 +34,32 @@ public class Question {
     private String question;
     private String answer;
     private String explanation;
+    private String[] answers;
 
-    public void setQuestion(String q){
-        this.question = q;
+    public static final int COUNT_OF_FIELDS_IN_QUESTION_CLASS = 4;
+
+    public void setQuestion(String question){
+        this.question = question;
     }
     public String getQuestion(){
         return question;
     }
 
-    public void setAnswer(String a){
-        this.answer = a;
+    public void setAnswer(String answer){
+        this.answer = answer;
     }
     public String getAnswer(){
         return answer;
     }
 
-    public void setExplanation(String e){
-        this.explanation = e;
+    public void setExplanation(String explanation){
+        this.explanation = explanation;
     }
     public String getExplanation(){
         return explanation;
     }
+
+    public void setAnswers(String[] answers) { this.answers = answers; }
+    public String[] getAnswers() { return answers; }
+
 }

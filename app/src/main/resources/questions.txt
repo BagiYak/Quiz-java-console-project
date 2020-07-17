@@ -1,14 +1,3 @@
-What is the capital of Kazakhstan?
-Nur-Sultan
-Before it was Astana
-Astana:Almaty:Aktau:Nur-Sultan:Oral
-
-Who is the first President of Kazakhstan?
-Nursultan Nazarbayev
-Now it is Jomart Tokaev
-Nursultan Nazarbaev:Jomart Tokaev:Yakushev Bagdat
-
-The sea name that is placed near Aktau city in Kazakhstan?
-Caspian Sea
-It's actually not sea, it's a biggest lake in the world
-Aral:Indian ocean:Caspian Sea
+What is the capital of Kazakhstan?:Nur-Sultan:Before it was Astana.:Astana~Almaty~Aktau~Nur-Sultan~Oral
+Who is the first President of Kazakhstan?:Nursultan Nazarbayev:Now it is Jomart Tokaev!:Nursultan Nazarbayev~Jomart Tokaev~Yakushev Bagdat
+The name of a Sea that is placed near Aktau city in Kazakhstan?:Caspian Sea:It's actually not a Sea, it's a biggest lake in the world!:Aral Sea~Indian Ocean~Caspian Sea
