@@ -61,6 +61,10 @@ public class Quiz {
     // interacting with gamers by console
     public static Console console = System.console();
 
+    // start the main() again with new gamer
+    public static String[] stringsVarargs = {"New gamer is launching..."};
+
+
 
     public static void main(String[] args) throws IOException {
 
@@ -182,12 +186,10 @@ public class Quiz {
                 // show list of gamer's score statistic info
                 showGamersScore(listGamers);
 
-                // start the main() again with new gamer
-                String[] stringsVarargs = {"New gamer is launching..."};
-
                 // create new gamer for quiz game
                 gamer = new Gamer();
 
+                // restart quiz game from main()
                 try {
                     Quiz.main(stringsVarargs);
                 } catch (IOException e) {
@@ -211,6 +213,45 @@ public class Quiz {
 
                 // increase index to step next question in showQuestion() method in main while loop
                 indexNextQuestion++;
+
+                // restarting game if questions end
+                if(indexNextQuestion == listQuestions.size()) {
+                    console.writer().println("******************************");
+                    console.writer().println("It was the last question in this Quiz game!");
+                    console.writer().println("If you wanna Restart game and try again, enter 'r' or any other to Quit.");
+
+                    // console to ask gamer choose to restart or quit
+                    String restartConsoleAnswer = console.readLine("Please, enter your answer: ");
+
+                    // restart game from the beginning
+                    if(restartConsoleAnswer.matches("r")) {
+
+                        console.writer().println("******************************");
+                        console.writer().println("Ok, let's try again this quiz game from the beginning !!!");
+
+                        // save gamers score to list and show all gamers scores
+                        saveGamerScore(listGamers, gamer);
+
+                        // show list of gamer's score statistic info
+                        showGamersScore(listGamers);
+
+                        // create new gamer for quiz game
+                        gamer = new Gamer();
+
+                        // restart quiz game from main()
+                        try {
+                            Quiz.main(stringsVarargs);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    // quit from the game
+                    else {
+                        console.writer().println("******************************");
+                        console.writer().println("Ok, " + gamer.getName() + " sea you next time!!!");
+                    }
+                }
             }
 
             // wrong answer to say try again
@@ -415,8 +456,7 @@ public class Quiz {
         console.writer().println("______________________________");
     }
 
-
-
+    
     /**
      * Method to show all questions for testing code
      *
