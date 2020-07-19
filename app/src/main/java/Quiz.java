@@ -101,7 +101,7 @@ public class Quiz {
             console.writer().println("Your score at start: " + gamer.getScore());
 
             // get user name from console and set it to gamer instance using my getSetGamerName() method from Quiz class
-            getSetGamerName(gamer);
+            getSetGamerName(gamer, listGamers);
 
             // Say hello to gamer and start quiz game
             console.writer().println("Glad to see you, " + gamer.getName() + "!");
@@ -145,7 +145,6 @@ public class Quiz {
             // printing instructions for gamer how to quit from game or change to new gamer
             console.writer().println("****************************************************");
             console.writer().println("If you wanna quit from the quiz game, just enter 'q' when answering!");
-            console.writer().println("If you wanna change to new gamer, just enter 'g' when answering!");
             console.writer().println("****************************************************");
 
             // console to ask gamer choose a number of answer for given question
@@ -176,43 +175,8 @@ public class Quiz {
                 console.writer().println("****************************************************");
                 console.writer().println("You chose to quit from Quiz game, thank you for trying!");
 
-                // save gamers score to list and show all gamers scores using my method saveGamers() from Quiz class
-                saveGamers(listGamers, gamer);
-
-                // show list of gamer's score statistic info using my method showGamersScore() from Quiz class
-                showGamersScore(listGamers);
-
-                // save list of gamers objects to destination file using my method createGamersFile() from Quiz class
-                createGamersFile(listGamers, gamersFile);
-
                 // boolean flag to quit from main while loop and stop the Quiz app in console
                 quit = false;
-            }
-
-            // "g" to change gamer
-            else if(stringConsoleAnswer.matches("g")) {
-
-                console.writer().println("****************************************************");
-                console.writer().println("You chose to change to new gamer, thank you for trying!");
-
-                // save gamers score to list and show all gamers scores using my method saveGamers() from Quiz class
-                saveGamers(listGamers, gamer);
-
-                // show list of gamer's score statistic info using my method showGamersScore() from Quiz class
-                showGamersScore(listGamers);
-
-                // save list of gamers objects to destination file using my method createGamersFile() from Quiz class
-                createGamersFile(listGamers, gamersFile);
-
-                // create new gamer for quiz game
-                gamer = new Gamer();
-
-                // restart quiz game from main()
-                try {
-                    Quiz.main(stringsVarargs);
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
             }
 
             // check given int answer by matching right answer with index from answers array
@@ -228,70 +192,26 @@ public class Quiz {
 
                 // show explanation of answer
                 console.writer().println("Explanation: " + listQuestions.get(indexNextQuestion).getExplanation());
-
-                // increase index to step next question in showQuestion() method in main while loop
-                indexNextQuestion++;
-
-                if(indexNextQuestion == listQuestions.size()) {
-
-                    // save gamers score to list and show all gamers scores using my saveGamers() method from Quiz class
-                    saveGamers(listGamers, gamer);
-
-                    // show list of gamer's score statistic info using my showGamersScore() method from Quiz class
-                    showGamersScore(listGamers);
-
-                    // save list of gamers objects to destination file using my createGamersFile() method from Quiz class
-                    createGamersFile(listGamers, gamersFile);
-
-                    console.writer().println("******************************");
-                    console.writer().println("It was the last question in this Quiz game!");
-                    console.writer().println("If you wanna Restart game and try again, enter 'r' or any other to Quit.");
-
-                    // console to ask gamer choose to restart or quit
-                    String restartConsoleAnswer = console.readLine("Please, enter your answer: ");
-
-                    // restart game from the beginning
-                    if(restartConsoleAnswer.matches("r")) {
-
-                        console.writer().println("******************************");
-                        console.writer().println("Ok, let's try again this quiz game from the beginning !!!");
-
-                        // create Gamer to change reference to new gamer object for quiz game
-                        gamer = new Gamer();
-
-                        // catching exceptions in main() method
-                        try {
-
-                            // restart quiz game from main()
-                            Quiz.main(stringsVarargs);
-
-                        } catch (IOException | ClassNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    // quit from the game
-                    else {
-
-                        // save list of gamers objects to destination file using my createGamersFile() method from Quiz class
-                        createGamersFile(listGamers, gamersFile);
-
-                        console.writer().println("******************************");
-                        console.writer().println("Ok, " + gamer.getName() + " sea you next time!!!");
-                    }
-                }
-    // TODO: need to check this if-else statement for some leaking if indexNextQuestion++ will change with unpredictable behavior
-                else new RuntimeException("Programmer check this code and fix it...");
             }
 
             // wrong answer to say try again
             else {
-
-                console.writer().println("*** No answers is matched ***");
-                console.writer().println("Your answer is wrong.");
-                console.writer().println("Should be some from 1 to : " + listQuestions.get(indexNextQuestion).getAnswers().length);
+                console.writer().println("*** Your answer is wrong ***");
             }
+
+            // increase index to step next question in next time using showQuestion() method in main while loop
+            indexNextQuestion++;
+
         }
+
+        // save gamers score to list and show all gamers scores using my saveGamers() method from Quiz class
+        saveGamers(listGamers, gamer);
+
+        // show list of gamer's score statistic info using my showGamersScore() method from Quiz class
+        showGamersScore(listGamers);
+
+        // save list of gamers objects to destination file using my createGamersFile() method from Quiz class
+        createGamersFile(listGamers, gamersFile);
 
     }
 
@@ -393,9 +313,27 @@ public class Quiz {
      *
      * @param newGamer
      */
-    private static void getSetGamerName(Gamer newGamer) {
+    private static void getSetGamerName(Gamer newGamer, List<Gamer> listOfGamers) {
 
         String gamerName = console.readLine("Please, enter your name: ");
+
+        // this loop needs to restart checking name after getting new name again
+        for (int i = 0; i < listOfGamers.size(); i++) {
+
+            // check matching name with names in file with Gamer's objects
+            for (Gamer gamer : listOfGamers) {
+
+                // if name is matched, ask new gamer to change name
+                if(gamerName.matches(gamer.getName())) {
+
+                    console.writer().println("There is already gamer with that name!");
+                    gamerName = console.readLine("Please, enter your special Name: ");
+
+                    // to start FOR loop from the beginning
+                    i = 0;
+                }
+            }
+        }
 
         // sets new gamer name in Gamer class instance
         newGamer.setName(gamerName);
