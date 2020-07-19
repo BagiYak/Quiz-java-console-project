@@ -25,13 +25,14 @@
  *  limitations under the License.
  */
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * Gamer class
  * need to create an instance of new quiz gamer
  */
-public class Gamer implements Comparable {
+public class Gamer implements Comparable, Serializable {
 
     private String name;
 

@@ -40,8 +40,14 @@ public class Quiz {
     // path to a file where quiz questions are written as text
     private static final String SOURCE_FILE = "C:\\Users\\Bagi\\IdeaProjects\\quiz\\src\\main\\resources\\questions.txt";
 
+    // path to a file where we save data with Gamers objects
+    private static final String GAMERS_FILE = "C:\\Users\\Bagi\\IdeaProjects\\quiz\\src\\main\\resources\\gamers.txt";
+
     // path to the file where we get questions
-    private static File source = new File(SOURCE_FILE);
+    private static File sourceFile = new File(SOURCE_FILE);
+
+    // path to the file where we save gamers objects
+    private static File gamersFile = new File(GAMERS_FILE);
 
     // string array for storing each string data from source file
     private static List<String> data;
@@ -66,18 +72,23 @@ public class Quiz {
 
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
 
-        // TODO: method to save a list of gamers with score to a file
-        // TODO: method to get and show a list of gamers with score to a file
+        // get all Gamer's objects from file gamers.txt and add it to list using my getGamersFromFile() method from Quiz class
+        listGamers = getGamersFromFile(gamersFile);
 
-        // return string array data using my readingFile() method
-        data = readFile(source);
+        // show list of gamer's score statistic info using my showGamersScore() method from Quiz class
+        showGamersScore(listGamers);
+
+        console.writer().println("****************************************************");
+        console.writer().println("****************************************************");
+        console.writer().println("****************************************************");
+
+        // return string array data using my readingFile() method from Quiz class
+        data = readFile(sourceFile);
 
         // add Question objects to list using my addQuestionsToList() method from Quiz class
         addQuestionsToList(data, listQuestions);
-
-
 
         // check if console is available in user machine
         if(console != null) {
@@ -120,7 +131,7 @@ public class Quiz {
      *
      * @param console
      */
-    private static void startQuiz(Console console) {
+    private static void startQuiz(Console console) throws IOException {
 
         // index to step next question in showQuestion() method in main while loop
         int indexNextQuestion = 0;
@@ -146,6 +157,7 @@ public class Quiz {
             // catching NumberFormatException when trying to convert gamer answer string from console to int number
             try {
 
+                // convert String from console to int
                 answerInt = parseInt(stringConsoleAnswer);
                 //console.writer().println("answerInt: " + answerInt);
 
@@ -164,11 +176,14 @@ public class Quiz {
                 console.writer().println("****************************************************");
                 console.writer().println("You chose to quit from Quiz game, thank you for trying!");
 
-                // save gamers score to list and show all gamers scores
-                saveGamerScore(listGamers, gamer);
+                // save gamers score to list and show all gamers scores using my method saveGamers() from Quiz class
+                saveGamers(listGamers, gamer);
 
-                // show list of gamer's score statistic info
+                // show list of gamer's score statistic info using my method showGamersScore() from Quiz class
                 showGamersScore(listGamers);
+
+                // save list of gamers objects to destination file using my method createGamersFile() from Quiz class
+                createGamersFile(listGamers, gamersFile);
 
                 // boolean flag to quit from main while loop and stop the Quiz app in console
                 quit = false;
@@ -180,11 +195,14 @@ public class Quiz {
                 console.writer().println("****************************************************");
                 console.writer().println("You chose to change to new gamer, thank you for trying!");
 
-                // save gamers score to list and show all gamers scores
-                saveGamerScore(listGamers, gamer);
+                // save gamers score to list and show all gamers scores using my method saveGamers() from Quiz class
+                saveGamers(listGamers, gamer);
 
-                // show list of gamer's score statistic info
+                // show list of gamer's score statistic info using my method showGamersScore() from Quiz class
                 showGamersScore(listGamers);
+
+                // save list of gamers objects to destination file using my method createGamersFile() from Quiz class
+                createGamersFile(listGamers, gamersFile);
 
                 // create new gamer for quiz game
                 gamer = new Gamer();
@@ -192,12 +210,12 @@ public class Quiz {
                 // restart quiz game from main()
                 try {
                     Quiz.main(stringsVarargs);
-                } catch (IOException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }
 
-            // right answer to congratulate, set and show gamer's score
+            // check given int answer by matching right answer with index from answers array
             else if (answerInt > 0 && answerInt <= answers.length && answer.matches(answers[answerInt-1])) {
 
                 // set gamer's score
@@ -214,8 +232,17 @@ public class Quiz {
                 // increase index to step next question in showQuestion() method in main while loop
                 indexNextQuestion++;
 
-                // restarting game if questions end
                 if(indexNextQuestion == listQuestions.size()) {
+
+                    // save gamers score to list and show all gamers scores using my saveGamers() method from Quiz class
+                    saveGamers(listGamers, gamer);
+
+                    // show list of gamer's score statistic info using my showGamersScore() method from Quiz class
+                    showGamersScore(listGamers);
+
+                    // save list of gamers objects to destination file using my createGamersFile() method from Quiz class
+                    createGamersFile(listGamers, gamersFile);
+
                     console.writer().println("******************************");
                     console.writer().println("It was the last question in this Quiz game!");
                     console.writer().println("If you wanna Restart game and try again, enter 'r' or any other to Quit.");
@@ -229,29 +256,32 @@ public class Quiz {
                         console.writer().println("******************************");
                         console.writer().println("Ok, let's try again this quiz game from the beginning !!!");
 
-                        // save gamers score to list and show all gamers scores
-                        saveGamerScore(listGamers, gamer);
-
-                        // show list of gamer's score statistic info
-                        showGamersScore(listGamers);
-
-                        // create new gamer for quiz game
+                        // create Gamer to change reference to new gamer object for quiz game
                         gamer = new Gamer();
 
-                        // restart quiz game from main()
+                        // catching exceptions in main() method
                         try {
+
+                            // restart quiz game from main()
                             Quiz.main(stringsVarargs);
-                        } catch (IOException e) {
+
+                        } catch (IOException | ClassNotFoundException e) {
                             e.printStackTrace();
                         }
                     }
 
                     // quit from the game
                     else {
+
+                        // save list of gamers objects to destination file using my createGamersFile() method from Quiz class
+                        createGamersFile(listGamers, gamersFile);
+
                         console.writer().println("******************************");
                         console.writer().println("Ok, " + gamer.getName() + " sea you next time!!!");
                     }
                 }
+    // TODO: need to check this if-else statement for some leaking if indexNextQuestion++ will change with unpredictable behavior
+                else new RuntimeException("Programmer check this code and fix it...");
             }
 
             // wrong answer to say try again
@@ -299,6 +329,11 @@ public class Quiz {
      */
     private static void addQuestionsToList(List<String> dataFromReadFile, List<Question> listQuestions) {
 
+        // clear list of questions, or it will add questions when gamer change to new gamer due to runtime
+        // and it will cause if-else statement when checking indexNextQuestion == listQuestions.size()
+        // for increasing index to step next question in showQuestion() method in main while loop
+        listQuestions.clear();
+
         for (String s : dataFromReadFile) {
 
             // create new Question instance
@@ -322,7 +357,8 @@ public class Quiz {
                 question.setAnswers(answerVarieties);
             }
 
-            // add each Question object to list
+            // add each new Question object to list
+
             listQuestions.add(question);
         }
 
@@ -367,7 +403,58 @@ public class Quiz {
     }
 
 
-    // TODO: add method to retrieve gamers from file and put them to list of gamers
+    /**
+     * Method to create file gamers.txt and save all gamers in it
+     *
+     * @param listOfGamers
+     * @param dataFile
+     * @throws IOException
+     */
+    private static void createGamersFile(List<Gamer> listOfGamers, File dataFile) throws IOException {
+
+        // if gamer score is more than 0 - save list of gamers objects to destination file
+        if(gamer.getScore() > 0) {
+
+            try(ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(dataFile)))) {
+
+                for(Gamer gamer : listOfGamers){
+                    out.writeObject(gamer);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Method to get all gamers from file gamers.txt
+     *
+     * @param dataFile
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private static List<Gamer> getGamersFromFile(File dataFile) throws IOException, ClassNotFoundException {
+
+        List<Gamer> gamers = new ArrayList<>();
+
+        try(ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(dataFile)))) {
+
+            while (true) {
+
+                Object object = in.readObject();
+
+                if(object instanceof Gamer) {
+                    gamers.add((Gamer)object);
+                }
+            }
+
+        } catch (EOFException e){
+            //e.printStackTrace();
+        }
+
+        return gamers;
+    }
+
 
     /**
      * Method to quit from quiz game at all
@@ -375,7 +462,7 @@ public class Quiz {
      * @param listOfGamers
      * @param gamer
      */
-    private static void saveGamerScore(List<Gamer> listOfGamers, Gamer gamer) {
+    private static void saveGamers(List<Gamer> listOfGamers, Gamer gamer) {
 
         console.writer().println("Your highest score: " + gamer.getScore());
         console.writer().println("Good luck, see you next time !!!");
