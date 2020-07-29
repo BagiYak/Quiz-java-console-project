@@ -1,12 +1,12 @@
 /*
- *   Bagdat Yakushev -> development author
- *   BagiYa -> my nickname
- *   @BagiYa -> Instagram
- *   t.me/BagiYak or @BagiYak -> Telegram
+ *   Development author -> Bagdat Yakushev
+ *   GitHub -> BagiYak
+ *   Instagram -> @Bagdat.Yakushev
+ *   Telegram -> t.me/BagiYak or @BagiYak
  *
  * This is my first Java App
  * that I decided to develop myself without copy pasting from any other projects.
- * Just using OCA and Head First books for java.
+ * Just using books: OCA and OCP Java SE 8, Head First Java.
  */
 
 /*

@@ -1,13 +1,13 @@
 /*
-*   Bagdat Yakushev -> development author
-*   BagiYa -> my nickname
-*   @BagiYa -> Instagram
-*   t.me/BagiYak or @BagiYak -> Telegram
-*
-* This is my first Java App
-* that I decided to develop myself without copy pasting from any other projects.
-* Just using OCA and Head First books for java.
-*/
+ *   Bagdat Yakushev -> development author
+ *   BagiYa -> my nickname
+ *   @BagiYa -> Instagram
+ *   t.me/BagiYak or @BagiYak -> Telegram
+ *
+ * This is my first Java App
+ * that I decided to develop myself without copy pasting from any other projects.
+ * Just using books: OCA and OCP Java SE 8, Head First Java.
+ */
 
 /*
  * Copyright (C) 2020 Bagdat Yakushev
@@ -52,14 +52,14 @@ public class Quiz {
     // string array for storing each string data from source file
     private static List<String> data;
 
-    // List to store all Question object from file source data
-    private static List<Question> listQuestions = new ArrayList<>();
-
     // List to store all new gamers object to show scores anf names for statistic
     private static List<Gamer> listGamers = new ArrayList<>();
 
     // create new Gamer instance
-    private static Gamer gamer = new Gamer();
+    private static final Gamer gamer = Gamer.getInstance();
+
+    // List to store all Question object from file source data
+    private static List<Question> listQuestions = new ArrayList<>();
 
     // boolean flag to stop first loop While if need to choose quit from the quiz game at all
     private static boolean quit = true;
@@ -67,55 +67,60 @@ public class Quiz {
     // interacting with gamers by console
     public static Console console = System.console();
 
-    // start the main() again with new gamer
-    public static String[] stringsVarargs = {"New gamer is launching..."};
 
 
-
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-
-        // get all Gamer's objects from file gamers.txt and add it to list using my getGamersFromFile() method from Quiz class
-        listGamers = getGamersFromFile(gamersFile);
-
-        // show list of gamer's score statistic info using my showGamersScore() method from Quiz class
-        showGamersScore(listGamers);
-
-        console.writer().println("****************************************************");
-        console.writer().println("****************************************************");
-        console.writer().println("****************************************************");
-
-        // return string array data using my readingFile() method from Quiz class
-        data = readFile(sourceFile);
-
-        // add Question objects to list using my addQuestionsToList() method from Quiz class
-        addQuestionsToList(data, listQuestions);
+    // The Main method - entry code of the App!
+    public static void main(String[] args) throws Exception {
 
         // check if console is available in user machine
         if(console != null) {
 
             // Welcome words for gamer
-            console.writer().println("****************************************************");
-            console.writer().println("Hello in Quiz App by '@BagiYa'");
-            console.writer().println("****************************************************");
+            console.writer().println("*********************************");
+            console.writer().println("* Hello in Quiz App by @BagiYak *");
+            console.writer().println("*********************************");
 
             console.writer().println("Your score at start: " + gamer.getScore());
 
+            // catching StreamCorruptedException when reading data from gamer's source file
+            try {
+                // get all Gamer's objects from file gamers.txt and add it to list using my getGamersFromFile() method from Quiz class
+                listGamers = getGamersFromFile(gamersFile);
+
+                // show list of gamer's score statistic info using my showGamersScore() method from Quiz class
+                if(!listGamers.isEmpty()) {
+                    showGamersScore(listGamers);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                System.out.println("Check gamer's list source file, some error with objects valid reading");
+            }
+
+            console.writer().println();
+
+            // return string array data using my readingFile() method from Quiz class
+            data = readFile(sourceFile);
+
+            // add Question objects to list using my addQuestionsToList() method from Quiz class
+            addQuestionsToList(data, listQuestions);
+
             // get user name from console and set it to gamer instance using my getSetGamerName() method from Quiz class
-            getSetGamerName(gamer, listGamers);
+            getSetCheckGamerName(gamer, listGamers);
 
             // Say hello to gamer and start quiz game
             console.writer().println("Glad to see you, " + gamer.getName() + "!");
-            console.writer().println("****************************************************");
-            console.writer().println("Now you need to answer quiz questions to get the highest score.");
-            console.writer().println("****************************************************");
+            console.writer().println("*****************************************************************");
+            console.writer().println(" Now you need to answer quiz questions to get the highest score ");
+            console.writer().println("*****************************************************************");
 
             // start Quiz game using my startQuiz() method from Quiz class
             startQuiz(console);
         }
 
         else {
-            console.writer().println("****************************************************");
-            console.writer().println("Console is not available. Check if it is available on your machine...");
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println("! Console is not available. Check if it is available on your Java machine... !");
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         // show all questions for testing code using my method showQuestions() from Quiz class
@@ -143,9 +148,9 @@ public class Quiz {
             showQuestion(listQuestions, indexNextQuestion);
 
             // printing instructions for gamer how to quit from game or change to new gamer
-            console.writer().println("****************************************************");
-            console.writer().println("If you wanna quit from the quiz game, just enter 'q' when answering!");
-            console.writer().println("****************************************************");
+            console.writer().println("************************************************************************");
+            console.writer().println("* If you wanna quit from the quiz game, just enter 'q' when answering! *");
+            console.writer().println("************************************************************************");
 
             // console to ask gamer choose a number of answer for given question
             String stringConsoleAnswer = console.readLine("Please, enter your answer: ");
@@ -172,8 +177,9 @@ public class Quiz {
             // "q" to quit
             if(stringConsoleAnswer.matches("q")) {
 
-                console.writer().println("****************************************************");
-                console.writer().println("You chose to quit from Quiz game, thank you for trying!");
+                console.writer().println("*********************************************************");
+                console.writer().println(" You chose to quit from Quiz game, thank you for trying! ");
+                console.writer().println("*********************************************************");
 
                 // boolean flag to quit from main while loop and stop the Quiz app in console
                 quit = false;
@@ -185,10 +191,12 @@ public class Quiz {
                 // set gamer's score
                 gamer.setScore();
 
-                console.writer().println("****************************************************");
+                console.writer().println("******************************");
 
                 // show gamer's score
-                console.writer().println("Good job!!! Your score is: " + gamer.getScore());
+                console.writer().println(" Good job!!! Your score: " + gamer.getScore());
+
+                console.writer().println("******************************");
 
                 // show explanation of answer
                 console.writer().println("Explanation: " + listQuestions.get(indexNextQuestion).getExplanation());
@@ -197,6 +205,9 @@ public class Quiz {
             // wrong answer to say try again
             else {
                 console.writer().println("*** Your answer is wrong ***");
+
+                // show gamer's score
+                console.writer().println(" Your score still: " + gamer.getScore());
             }
 
             // increase index to step next question in next time using showQuestion() method in main while loop
@@ -217,7 +228,7 @@ public class Quiz {
 
 
     /**
-     * Method to read data from source file and return it
+     * Method to read data with questions from source file and return it
      *
      * @param source
      * @return
@@ -313,30 +324,43 @@ public class Quiz {
      *
      * @param newGamer
      */
-    private static void getSetGamerName(Gamer newGamer, List<Gamer> listOfGamers) {
+    private static void getSetCheckGamerName(Gamer newGamer, List<Gamer> listOfGamers) {
 
-        String gamerName = console.readLine("Please, enter your name: ");
+        // flag if need to call this method again when gamer name is invalid
+        boolean flagCallThisMethodAgain = false;
 
-        // this loop needs to restart checking name after getting new name again
-        for (int i = 0; i < listOfGamers.size(); i++) {
+        String gamerName = console.readLine("Please, enter your special name: ");
+
+        // check gamer name for null or less than 2 letters in name
+        if(gamerName != null && gamerName.length() > 1) {
 
             // check matching name with names in file with Gamer's objects
-            for (Gamer gamer : listOfGamers) {
+            for (Gamer gamerInList : listOfGamers) {
 
                 // if name is matched, ask new gamer to change name
-                if(gamerName.matches(gamer.getName())) {
+                if(gamerName.matches(gamerInList.getName())) {
 
-                    console.writer().println("There is already gamer with that name!");
-                    gamerName = console.readLine("Please, enter your special Name: ");
-
-                    // to start FOR loop from the beginning
-                    i = 0;
+                    console.writer().println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                    console.writer().println(" There is already gamer with name: '" + gamerName + "'");
+                    console.writer().println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                    flagCallThisMethodAgain = true;
+                    break;
                 }
             }
+
+            // sets new gamer name in Gamer class instance
+            newGamer.setName(gamerName);
+
+        } else {
+            console.writer().println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            console.writer().println(" The name may not be empty or less than 2 letters");
+            console.writer().println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            flagCallThisMethodAgain = true;
         }
 
-        // sets new gamer name in Gamer class instance
-        newGamer.setName(gamerName);
+        if(flagCallThisMethodAgain == true) {
+            getSetCheckGamerName(newGamer, listOfGamers);
+        }
 
     }
 
@@ -355,8 +379,8 @@ public class Quiz {
 
             try(ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(dataFile)))) {
 
-                for(Gamer gamer : listOfGamers){
-                    out.writeObject(gamer);
+                for(Gamer gamerInList : listOfGamers){
+                    out.writeObject(gamerInList);
                 }
             }
         }
@@ -373,7 +397,7 @@ public class Quiz {
      */
     private static List<Gamer> getGamersFromFile(File dataFile) throws IOException, ClassNotFoundException {
 
-        List<Gamer> gamers = new ArrayList<>();
+        List<Gamer> gamersList = new ArrayList<>();
 
         try(ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(dataFile)))) {
 
@@ -382,7 +406,7 @@ public class Quiz {
                 Object object = in.readObject();
 
                 if(object instanceof Gamer) {
-                    gamers.add((Gamer)object);
+                    gamersList.add((Gamer)object);
                 }
             }
 
@@ -390,7 +414,7 @@ public class Quiz {
             //e.printStackTrace();
         }
 
-        return gamers;
+        return gamersList;
     }
 
 
@@ -398,17 +422,16 @@ public class Quiz {
      * Method to quit from quiz game at all
      *
      * @param listOfGamers
-     * @param gamer
+     * @param paramGamer
      */
-    private static void saveGamers(List<Gamer> listOfGamers, Gamer gamer) {
+    private static void saveGamers(List<Gamer> listOfGamers, Gamer paramGamer) {
 
-        console.writer().println("Your highest score: " + gamer.getScore());
-        console.writer().println("Good luck, see you next time !!!");
-        console.writer().println("******************************");
+        console.writer().println("************************************");
+        console.writer().println("* Good luck, see you next time !!! *");
+        console.writer().println("************************************");
 
-        // this code line where I use Gamer class parameterised constructor
         // to store all gamers objects to list for statistic info
-        listOfGamers.add(new Gamer(gamer));
+        listOfGamers.add(paramGamer);
 
     }
 
@@ -420,9 +443,7 @@ public class Quiz {
      */
     private static void showGamersScore(List<Gamer> listOfGamers) {
 
-        /*
-         * 1 variant (default) of sorting array by score
-         */
+        /* 1 variant (default) of sorting array by score */
 
         // save list of gamer to array
         Object[] o = listOfGamers.toArray();
@@ -430,8 +451,10 @@ public class Quiz {
         // default array sorting and reverse to show winners by highest score
         Arrays.sort(o, Collections.reverseOrder());
 
-        console.writer().println("List of the best Quiz gamers by Score:");
-        console.writer().println("******************************");
+        console.writer().println();
+        console.writer().println("*****************************************");
+        console.writer().println("* List of the best Quiz gamers by Score *");
+        console.writer().println("*****************************************");
 
         // show list of gamers by score
         int indexGamer = 0;
@@ -444,9 +467,9 @@ public class Quiz {
         }
 
         /*
-        * 2 variant of sorting array by score by implementing Comparator interface in Gamer class
-        * usefull when need to sort by variant variable states of instance
-        */
+         * 2 variant of sorting array by score by implementing Comparator interface in Gamer class
+         * usefull when need to sort by variant variable states of instance
+         */
         Object[] objectArray = listOfGamers.toArray();
 
         // another way to sort implementing Comparator interface in ComparatorByScore class from Gamer class
@@ -466,22 +489,22 @@ public class Quiz {
 
         });
 
-        console.writer().println("List of Quiz gamers by Name:");
-        console.writer().println("______________________________");
+        console.writer().println();
+        console.writer().println("*******************************");
+        console.writer().println("* List of Quiz gamers by Name *");
+        console.writer().println("*******************************");
 
         int k = 0;
 
         for(Object objGamer : objectArray) {
 
             console.writer().println(k+1 + ") " + objGamer.toString());
-            console.writer().println("******************************");
+            console.writer().println("______________________________");
             k++;
         }
-
-        console.writer().println("______________________________");
     }
 
-    
+
     /**
      * Method to show all questions for testing code
      *

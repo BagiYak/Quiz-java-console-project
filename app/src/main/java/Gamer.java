@@ -1,12 +1,12 @@
 /*
- *   Bagdat Yakushev -> development author
- *   BagiYa -> my nickname
- *   @BagiYa -> Instagram
- *   t.me/BagiYak or @BagiYak -> Telegram
+ *   Development author -> Bagdat Yakushev
+ *   GitHub -> BagiYak
+ *   Instagram -> @Bagdat.Yakushev
+ *   Telegram -> t.me/BagiYak or @BagiYak
  *
  * This is my first Java App
  * that I decided to develop myself without copy pasting from any other projects.
- * Just using OCA and Head First books for java.
+ * Just using books: OCA and OCP Java SE 8, Head First Java.
  */
 
 /*
@@ -39,36 +39,38 @@ public class Gamer implements Comparable, Serializable {
     // to store gamer's scores (each answer = +1 score)
     private int score = 0;
 
-    // default constructor for extends and polymorphism rules
-    public Gamer() {}
+    // private constructor
+    // Singleton pattern to create an object only once in memory within an App and have it shared by multiple class
+    private Gamer() {}
 
-    // this constructor for saving as new object to list in Quiz class to prevent reference mismatch and data errors
-    public Gamer(Gamer gamer) {
-        this.name = gamer.getName();
-        this.score = gamer.getScore();
+    // create only one instance of Gamer class within App
+    private static final Gamer instance = new Gamer();
+
+    public static Gamer getInstance() {
+        return instance;
     }
 
-    public void setName(String n){
+    public synchronized void setName(String n){
         this.name = n;
     }
-    public String getName(){
+    public synchronized String getName(){
         return name;
     }
 
-    public void setScore(){
+    public synchronized void setScore(){
         this.score++;
     }
-    public int getScore(){
+    public synchronized int getScore(){
         return score;
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         return "Gamer: " + name + ", score=" + score;
     }
 
     @Override
-    public int compareTo(Object o) {
+    public synchronized int compareTo(Object o) {
         //return this.score - ((Gamer)o).score;
         //return this.name.compareTo(((Gamer)o).name);
 
@@ -83,7 +85,7 @@ public class Gamer implements Comparable, Serializable {
 }
 
 class ComparatorByScore implements Comparator {
-    public int compare(Object o1, Object o2) {
+    public synchronized int compare(Object o1, Object o2) {
         return ((Gamer)o1).getScore() - ((Gamer)o2).getScore();
     }
 }
