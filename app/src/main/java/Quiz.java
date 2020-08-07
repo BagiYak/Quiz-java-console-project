@@ -1,15 +1,14 @@
 /*
- *   Bagdat Yakushev -> development author
- *   BagiYa -> my nickname
- *   @BagiYa -> Instagram
- *   t.me/BagiYak or @BagiYak -> Telegram
+ *   Development author -> Bagdat Yakushev
+ *   GitHub -> BagiYak
+ *   Instagram -> @Bagdat.Yakushev
+ *   Telegram -> t.me/BagiYak or @BagiYak
  *
  * This is my first Java App
  * that I decided to develop myself without copy pasting from any other projects.
  * Just using books: OCA and OCP Java SE 8, Head First Java.
- */
-
-/*
+ 
+ 
  * Copyright (C) 2020 Bagdat Yakushev
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +54,7 @@ public class Quiz {
     // List to store all new gamers object to show scores anf names for statistic
     private static List<Gamer> listGamers = new ArrayList<>();
 
-    // create new Gamer instance
+    // get Gamer instance
     private static final Gamer gamer = Gamer.getInstance();
 
     // List to store all Question object from file source data
@@ -443,48 +442,30 @@ public class Quiz {
      */
     private static void showGamersScore(List<Gamer> listOfGamers) {
 
-        /* 1 variant (default) of sorting array by score */
+        /* 1 variant (default) of sorting list by score */
 
-        // save list of gamer to array
-        Object[] o = listOfGamers.toArray();
-
-        // default array sorting and reverse to show winners by highest score
-        Arrays.sort(o, Collections.reverseOrder());
+        // sorting to show winners by highest score
+        Collections.sort(listOfGamers);
 
         console.writer().println();
-        console.writer().println("*****************************************");
-        console.writer().println("* List of the best Quiz gamers by Score *");
-        console.writer().println("*****************************************");
+        console.writer().println("*************************************************");
+        console.writer().println("* List of the best Quiz gamers by highest Score *");
+        console.writer().println("*************************************************");
 
-        // show list of gamers by score
-        int indexGamer = 0;
+        // show list of gamers by highest score
+        listOfGamers.forEach(c -> console.writer().println(c));
 
-        for(Object objGamer : o) {
-
-            console.writer().println(indexGamer+1 + ") " + objGamer.toString());
-            console.writer().println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            indexGamer++;
-        }
 
         /*
-         * 2 variant of sorting array by score by implementing Comparator interface in Gamer class
+         * 2 variant of sorting list by score by implementing new Comparator interface as anonymous class
          * usefull when need to sort by variant variable states of instance
          */
-        Object[] objectArray = listOfGamers.toArray();
 
-        // another way to sort implementing Comparator interface in ComparatorByScore class from Gamer class
-        //Arrays.sort(objectArray, new ComparatorByScore());
-
-        // lambda statement to sort array by score
-        //Arrays.sort(objectArray, (o1, o2) -> ((Gamer)o1).getScore() - ((Gamer)o2).getScore());
-
-        // another variant code instead of lambda statement to sort array by name
-        Arrays.sort(objectArray, new Comparator<Object>(){
+        Collections.sort(listOfGamers, new Comparator<Gamer>(){
 
             @Override
-            public int compare(Object o1, Object o2) {
-                //return ((Gamer)o1).getScore() - ((Gamer)o2).getScore();
-                return ((Gamer)o1).getName().compareTo(((Gamer)o2).getName());
+            public int compare(Gamer g1, Gamer g2) {
+                return g1.getName().compareTo(g2.getName());
             }
 
         });
@@ -494,14 +475,8 @@ public class Quiz {
         console.writer().println("* List of Quiz gamers by Name *");
         console.writer().println("*******************************");
 
-        int k = 0;
-
-        for(Object objGamer : objectArray) {
-
-            console.writer().println(k+1 + ") " + objGamer.toString());
-            console.writer().println("______________________________");
-            k++;
-        }
+        // show list of gamers by sorted names
+        listOfGamers.forEach(console.writer()::println);
     }
 
 

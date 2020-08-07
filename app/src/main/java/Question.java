@@ -7,9 +7,8 @@
  * This is my first Java App
  * that I decided to develop myself without copy pasting from any other projects.
  * Just using books: OCA and OCP Java SE 8, Head First Java.
- */
-
-/*
+ 
+ 
  * Copyright (C) 2020 Bagdat Yakushev
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");

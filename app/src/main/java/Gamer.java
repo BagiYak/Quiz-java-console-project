@@ -7,9 +7,8 @@
  * This is my first Java App
  * that I decided to develop myself without copy pasting from any other projects.
  * Just using books: OCA and OCP Java SE 8, Head First Java.
- */
-
-/*
+ 
+ 
  * Copyright (C) 2020 Bagdat Yakushev
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +31,7 @@ import java.util.Comparator;
  * Gamer class
  * need to create an instance of new quiz gamer
  */
-public class Gamer implements Comparable, Serializable {
+public class Gamer implements Comparable<Gamer>, Serializable {
 
     private String name;
 
@@ -64,28 +63,13 @@ public class Gamer implements Comparable, Serializable {
         return score;
     }
 
+    // used to show list of gamers by highest score in my method showGamersScore() in Quiz class
     @Override
     public synchronized String toString() {
         return "Gamer: " + name + ", score=" + score;
     }
 
+    // implementing compareTo() from Comparable interface to use for sorting gamers by highest score
     @Override
-    public synchronized int compareTo(Object o) {
-        //return this.score - ((Gamer)o).score;
-        //return this.name.compareTo(((Gamer)o).name);
-
-        if (this.score > ((Gamer)o).score) {
-            return 1;
-        } else if (this.score < ((Gamer)o).score) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-}
-
-class ComparatorByScore implements Comparator {
-    public synchronized int compare(Object o1, Object o2) {
-        return ((Gamer)o1).getScore() - ((Gamer)o2).getScore();
-    }
+    public synchronized int compareTo(Gamer g) { return g.score - this.score; }
 }
